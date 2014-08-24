@@ -5,7 +5,7 @@
 
 
 
-namespace Plugin\Mokejimai;
+namespace Plugin\Paysera;
 
 
 class SiteController extends \Ip\Controller
@@ -60,7 +60,7 @@ class SiteController extends \Ip\Controller
 
         $data = array(
             'payment' => $payment,
-            'paymentUrl' => ipRouteUrl('Mokejimai_pay', array('paymentId' => $payment['id'], 'securityCode' => $payment['securityCode']))
+            'paymentUrl' => ipRouteUrl('Paysera_pay', array('paymentId' => $payment['id'], 'securityCode' => $payment['securityCode']))
         );
         $view = ipView('view/page/status.php', $data);
         return $view;

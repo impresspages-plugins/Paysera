@@ -26,7 +26,7 @@
  * @link       http://www.webtopay.com/
  */
 
-namespace Plugin\Mokejimai;
+namespace Plugin\Paysera;
 
 
 /**

@@ -1,7 +1,7 @@
 {
     "title": "2checkout",
     "version": "1.00",
-    "name": "Mokejimai",
+    "name": "Paysera",
     "description": "2checkout payment method to accept Accept Credit Cards and Debit Cards.",
     "author": "ImpressPages",
     "options": [

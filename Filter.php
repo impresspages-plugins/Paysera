@@ -5,7 +5,7 @@
 
 
 
-namespace Plugin\Mokejimai;
+namespace Plugin\Paysera;
 
 
 class Filter

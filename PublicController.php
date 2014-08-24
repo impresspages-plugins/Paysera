@@ -4,7 +4,7 @@
  */
 
 
-namespace Plugin\Mokejimai;
+namespace Plugin\Paysera;
 
 
 class PublicController extends \Ip\Controller
@@ -34,7 +34,7 @@ class PublicController extends \Ip\Controller
                 'payment' => $payment
             );
             $response = ipView('view/paymentError.php', $viewData);
-            $response = ipFilter('Mokejimai_userBackResponseError', $response);
+            $response = ipFilter('Paysera_userBackResponseError', $response);
             return $response;
         }
 
@@ -45,7 +45,7 @@ class PublicController extends \Ip\Controller
     {
         $paymentModel = PaymentModel::instance();
         $postData = ipRequest()->getPost();
-        ipLog()->info('Mokejimai.ipn: 2checkout notification', $postData);
+        ipLog()->info('Paysera.ipn: 2checkout notification', $postData);
         $paymentModel->processCallback($postData);
     }
 

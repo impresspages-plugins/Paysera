@@ -11,7 +11,7 @@
  * Time: 10:56 AM
  */
 
-namespace Plugin\Mokejimai;
+namespace Plugin\Paysera;
 
 
 class Helper
@@ -19,13 +19,13 @@ class Helper
     public static function responseAfterPayment($paymentId, $securityCode)
     {
         $payment = Model::getPayment($paymentId);
-        $orderUrl = ipRouteUrl('Mokejimai_status', array('paymentId' => $paymentId, 'securityCode' => $securityCode));
+        $orderUrl = ipRouteUrl('Paysera_status', array('paymentId' => $paymentId, 'securityCode' => $securityCode));
         $response = new \Ip\Response\Redirect($orderUrl);
 
         if (!empty($payment['successUrl'])) {
             $response = new \Ip\Response\Redirect($payment['successUrl']);
         }
-        $response = ipFilter('Mokejimai_userBackResponse', $response);
+        $response = ipFilter('Paysera_userBackResponse', $response);
         return $response;
     }
 }

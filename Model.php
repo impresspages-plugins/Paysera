@@ -4,7 +4,7 @@
  */
 
 
-namespace Plugin\Mokejimai;
+namespace Plugin\Paysera;
 
 
 class Model
@@ -32,7 +32,7 @@ class Model
         );
 
 
-        $paymentId = ipDb()->insert('Mokejimai', $data);
+        $paymentId = ipDb()->insert('Paysera', $data);
         return $paymentId;
     }
 
@@ -40,12 +40,12 @@ class Model
 
     public static function getPayment($paymentId)
     {
-        $order = ipDb()->selectRow('Mokejimai', '*', array('id' => $paymentId));
+        $order = ipDb()->selectRow('Paysera', '*', array('id' => $paymentId));
         return $order;
     }
     public static function update($paymentId, $data)
     {
-        ipDb()->update('Mokejimai', $data, array('id' => $paymentId));
+        ipDb()->update('Paysera', $data, array('id' => $paymentId));
     }
 
 

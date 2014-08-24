@@ -11,64 +11,64 @@
  * Time: 2:19 PM
  */
 
-namespace Plugin\Mokejimai;
+namespace Plugin\Paysera;
 
 
 class AdminController {
     public function index()
     {
         $config = array(
-            'table' => 'Mokejimai',
+            'table' => 'Paysera',
             'orderBy' => '`id` desc',
             'fields' => array(
                 array(
-                    'label' => __('Order ID', 'Mokejimai', false),
+                    'label' => __('Order ID', 'Paysera', false),
                     'field' => 'orderId',
                     'allowUpdate' => false,
                     'allowInsert' => false
                 ),
                 array(
-                    'label' => __('Title', 'Mokejimai', false),
+                    'label' => __('Title', 'Paysera', false),
                     'field' => 'title'
                 ),
                 array(
-                    'label' => __('Price', 'Mokejimai', false),
+                    'label' => __('Price', 'Paysera', false),
                     'field' => 'price',
                     'type' => 'Currency',
                     'currencyField' => 'currency'
                 ),
                 array(
-                    'label' => __('Currency', 'Mokejimai', false),
+                    'label' => __('Currency', 'Paysera', false),
                     'field' => 'currency'
                 ),
                 array(
-                    'label' => __('Paid', 'Mokejimai', false),
+                    'label' => __('Paid', 'Paysera', false),
                     'field' => 'isPaid',
                     'type' => 'Checkbox'
                 ),
                 array(
-                    'label' => __('User ID', 'Mokejimai', false),
+                    'label' => __('User ID', 'Paysera', false),
                     'field' => 'userId',
                     'type' => 'Integer'
                 ),
                 array(
-                    'label' => __('First Name', 'Mokejimai', false),
+                    'label' => __('First Name', 'Paysera', false),
                     'field' => 'payer_first_name'
                 ),
                 array(
-                    'label' => __('Last Name', 'Mokejimai', false),
+                    'label' => __('Last Name', 'Paysera', false),
                     'field' => 'payer_last_name'
                 ),
                 array(
-                    'label' => __('Email', 'Mokejimai', false),
+                    'label' => __('Email', 'Paysera', false),
                     'field' => 'payer_email'
                 ),
                 array(
-                    'label' => __('Country', 'Mokejimai', false),
+                    'label' => __('Country', 'Paysera', false),
                     'field' => 'payer_country'
                 ),
                 array(
-                    'label' => __('Created At', 'Mokejimai', false),
+                    'label' => __('Created At', 'Paysera', false),
                     'field' => 'createdAt'
                 ),
 

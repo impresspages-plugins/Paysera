@@ -6,7 +6,7 @@
 
 
 
-namespace Plugin\Mokejimai\Setup;
+namespace Plugin\Paysera\Setup;
 
 
 class Worker
@@ -14,7 +14,7 @@ class Worker
     public function activate()
     {
 
-        $table = ipTable('Mokejimai');
+        $table = ipTable('Paysera');
         $sql="
         CREATE TABLE IF NOT EXISTS $table (
           `id` int(11) NOT NULL AUTO_INCREMENT,

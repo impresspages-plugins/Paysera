@@ -4,7 +4,7 @@
  */
 
 
-namespace Plugin\Mokejimai;
+namespace Plugin\Paysera;
 
 
 class Payment extends \Ip\Payment
@@ -16,7 +16,7 @@ class Payment extends \Ip\Payment
 
     public function icon($width = null, $height = null)
     {
-        return ipFileUrl('Plugin/Mokejimai/assets/2checkout.png');
+        return ipFileUrl('Plugin/Paysera/assets/2checkout.png');
     }
 
     public function html()
@@ -42,6 +42,6 @@ class Payment extends \Ip\Payment
             'paymentId' => $paymentId,
             'securityCode' => $payment['securityCode']
         );
-        return ipRouteUrl('Mokejimai_pay', $urlData);
+        return ipRouteUrl('Paysera_pay', $urlData);
     }
 }

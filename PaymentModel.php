@@ -4,7 +4,7 @@
  */
 
 
-namespace Plugin\Mokejimai;
+namespace Plugin\Paysera;
 
 
 class PaymentModel
@@ -40,7 +40,7 @@ class PaymentModel
 
     public function processCallback($params)
     {
-        require_once('lib/Mokejimai.php');
+        require_once('lib/Paysera.php');
 
         if (ipRequest()->isPost()) { //no user. Just the notification
             $params = array();
@@ -48,7 +48,7 @@ class PaymentModel
                 $params[$k] = $v;
             }
 
-            $passback = \Mokejimai_Notification::check($params, $this->secretWord());
+            $passback = \Paysera_Notification::check($params, $this->secretWord());
         } else { //notification data and user
             $params = array();
             foreach (ipRequest()->getQuery() as $k => $v) {
@@ -59,7 +59,7 @@ class PaymentModel
                 $params['order_number'] = 1;
             }
 
-            $passback = \Mokejimai_Return::check($params, $this->secretWord());
+            $passback = \Paysera_Return::check($params, $this->secretWord());
         }
 
 
@@ -75,12 +75,12 @@ class PaymentModel
             $payment = Model::getPayment($paymentId);
 
             if (!$payment) {
-                ipLog()->error('Mokejimai.ipn: Order not found.', array('paymentId' => $paymentId));
+                ipLog()->error('Paysera.ipn: Order not found.', array('paymentId' => $paymentId));
                 return;
             }
 
             if ($payment['currency'] != $currency) {
-                ipLog()->error('Mokejimai.ipn: IPN rejected. Currency doesn\'t match', array('notification currency' => $currency, 'expected currency' => $payment['currency']));
+                ipLog()->error('Paysera.ipn: IPN rejected. Currency doesn\'t match', array('notification currency' => $currency, 'expected currency' => $payment['currency']));
                 return;
             }
 
@@ -89,17 +89,17 @@ class PaymentModel
             $orderPrice = substr_replace($orderPrice, '.', -2, 0);
 
             if ($amount != $orderPrice) {
-                ipLog()->error('Mokejimai.ipn: IPN rejected. Price doesn\'t match', array('notification price' => $amount, 'expected price' => '' . $orderPrice));
+                ipLog()->error('Paysera.ipn: IPN rejected. Price doesn\'t match', array('notification price' => $amount, 'expected price' => '' . $orderPrice));
                 return;
             }
 
             if ($receiver != $this->getSid()) {
-                ipLog()->error('Mokejimai.ipn: IPN rejected. Recipient doesn\'t match', array('notification recipient' => $receiver, 'expected recipient' => $this->getSid()));
+                ipLog()->error('Paysera.ipn: IPN rejected. Recipient doesn\'t match', array('notification recipient' => $receiver, 'expected recipient' => $this->getSid()));
                 return;
             }
 
             if ($payment['isPaid']) {
-                ipLog()->error('Mokejimai.ipn: Order is already paid', $response);
+                ipLog()->error('Paysera.ipn: Order is already paid', $response);
                 return;
             }
 
@@ -111,7 +111,7 @@ class PaymentModel
                 'userId' => $payment['userId']
             );
 
-            ipLog()->info('Mokejimai.ipn: Successful payment', $info);
+            ipLog()->info('Paysera.ipn: Successful payment', $info);
 
             $newData = array();
             $eventData = array();
@@ -137,7 +137,7 @@ class PaymentModel
         } else {
             //fail
             ipLog()->error(
-                'Mokejimai.ipn: notification check error',
+                'Paysera.ipn: notification check error',
                 $params
             );
             return;
@@ -172,9 +172,9 @@ class PaymentModel
 
     public function get2checkoutForm($paymentId)
     {
-        require_once('lib/Mokejimai.php');
+        require_once('lib/Paysera.php');
         if (!$this->getSid()) {
-            throw new \Ip\Exception('Please enter configuration values for Mokejimai plugin');
+            throw new \Ip\Exception('Please enter configuration values for Paysera plugin');
         }
 
 
@@ -204,9 +204,9 @@ class PaymentModel
             'currency_code' => $currency,
             'custom' => json_encode($privateData),
             'demo' => $this->isTestMode() ? 'Y' : 'N',
-            'x_receipt_link_url' => ipRouteUrl('Mokejimai_return'),
+            'x_receipt_link_url' => ipRouteUrl('Paysera_return'),
         );
-        $form = \Mokejimai_Charge::form($params, 'auto');
+        $form = \Paysera_Charge::form($params, 'auto');
 
 
         return $form;
@@ -241,9 +241,9 @@ class PaymentModel
     public function getSid()
     {
         if ($this->isTestMode()) {
-            return ipGetOption('Mokejimai.testSid');
+            return ipGetOption('Paysera.testSid');
         } else {
-            return ipGetOption('Mokejimai.sid');
+            return ipGetOption('Paysera.sid');
         }
     }
 
@@ -251,23 +251,23 @@ class PaymentModel
 
     public function isTestMode()
     {
-        return ipGetOption('Mokejimai.mode') == self::MODE_TEST;
+        return ipGetOption('Paysera.mode') == self::MODE_TEST;
     }
 
 
     public function isSkipMode()
     {
-        return ipGetOption('Mokejimai.mode') == self::MODE_SKIP;
+        return ipGetOption('Paysera.mode') == self::MODE_SKIP;
     }
 
     public function isProductionMode()
     {
-        return ipGetOption('Mokejimai.mode') == self::MODE_PRODUCTION;
+        return ipGetOption('Paysera.mode') == self::MODE_PRODUCTION;
     }
 
     public function secretWord()
     {
-        return ipGetOption('Mokejimai.secretWord');
+        return ipGetOption('Paysera.secretWord');
     }
 
     public function correctConfiguration()
