@@ -172,6 +172,29 @@ class PaymentModel
 
     public function getPayseraForm($paymentId)
     {
+        require_once('WebToPay.php');
+
+
+        $options = array(
+            'projectid'     => 55230,
+            'sign_password' => '702e52be319c9b692e5225702830df04',
+            'orderid'       => 125,
+            'amount'        => 1000,
+            'currency'      => 'LTL',
+            'country'       => 'LT',
+            'accepturl'     => ipRouteUrl('Paysera_return'),
+            'callbackurl'   => ipRouteUrl('Paysera_ipn'),
+            'test'          => 1,
+            'cancelurl'     => ipConfig()->baseUrl()
+        );
+
+
+
+        $request = WebToPay::redirectToPayment($options);
+        var_dump($request);exit;
+
+
+
         require_once('lib/Paysera.php');
         if (!$this->getSid()) {
             throw new \Ip\Exception('Please enter configuration values for Paysera plugin');
