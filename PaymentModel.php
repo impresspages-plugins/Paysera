@@ -38,114 +38,54 @@ class PaymentModel
         return self::$instance;
     }
 
-    public function processCallback($params)
+    public function processCallback()
     {
-        require_once('lib/Paysera.php');
+        require_once('WebToPay.php');
 
-        if (ipRequest()->isPost()) { //no user. Just the notification
-            $params = array();
-            foreach (ipRequest()->getPost() as $k => $v) {
-                $params[$k] = $v;
+        $response = array();
+
+        try {
+            $response = WebToPay::checkResponse(ipRequest()->getQuery(), array(
+                    'projectid'     => $this->projectId(),
+                    'sign_password' => $this->password(),
+                ));
+
+            if ($response['test'] != PaymentModel::isTestMode()) {
+                ipLog()->error('Paysera.ipn: test mode parameter don\'t match', $response);
+                return false;
+            }
+            if ($response['type'] !== 'macro') {
+                ipLog()->error('Paysera.ipn: Only macro payment callbacks are accepted', $response);
+                return false;
             }
 
-            $passback = \Paysera_Notification::check($params, $this->secretWord());
-        } else { //notification data and user
-            $params = array();
-            foreach (ipRequest()->getQuery() as $k => $v) {
-                $params[$k] = $v;
-            }
-
-            if ($this->isTestMode()) {
-                $params['order_number'] = 1;
-            }
-
-            $passback = \Paysera_Return::check($params, $this->secretWord());
-        }
-
-
-        if (!empty($passback['response_code']) && $passback['response_code'] = 'Success') {
-            //successful payment
-
-            $customData = json_decode($params['custom'], true);
-            $paymentId = isset($customData['paymentId']) ? $customData['paymentId'] : null;
-            $currency = isset($params['currency_code']) ? $params['currency_code'] : null;
-            $receiver = isset($params['sid']) ? $params['sid'] : null;
-            $amount = isset($params['li_0_price']) ? $params['li_0_price'] : null;
+            $paymentId = $response['orderid'];
+            $amount = $response['amount'];
+            $currency = $response['currency'];
 
             $payment = Model::getPayment($paymentId);
 
-            if (!$payment) {
-                ipLog()->error('Paysera.ipn: Order not found.', array('paymentId' => $paymentId));
-                return;
-            }
-
-            if ($payment['currency'] != $currency) {
-                ipLog()->error('Paysera.ipn: IPN rejected. Currency doesn\'t match', array('notification currency' => $currency, 'expected currency' => $payment['currency']));
-                return;
-            }
-
-            $orderPrice = $payment['price'];
-            $orderPrice = str_pad($orderPrice, 3, "0", STR_PAD_LEFT);
-            $orderPrice = substr_replace($orderPrice, '.', -2, 0);
-
-            if ($amount != $orderPrice) {
-                ipLog()->error('Paysera.ipn: IPN rejected. Price doesn\'t match', array('notification price' => $amount, 'expected price' => '' . $orderPrice));
-                return;
-            }
-
-            if ($receiver != $this->getSid()) {
-                ipLog()->error('Paysera.ipn: IPN rejected. Recipient doesn\'t match', array('notification recipient' => $receiver, 'expected recipient' => $this->getSid()));
-                return;
-            }
-
             if ($payment['isPaid']) {
-                ipLog()->error('Paysera.ipn: Order is already paid', $response);
-                return;
+                return $response;
             }
 
-            $info = array(
-                'id' => $payment['orderId'],
-                'paymentId' => $payment['id'],
-                'paymentMethod' => 'Paysera',
-                'title' => $payment['title'],
-                'userId' => $payment['userId']
-            );
-
-            ipLog()->info('Paysera.ipn: Successful payment', $info);
-
-            $newData = array();
-            $eventData = array();
-            if (isset($params['first_name'])) {
-                $newData['payer_first_name'] = $params['first_name'];
-                $eventData['payer_first_name'] = $params['first_name'];
+            if ($payment['price'] != $amount) {
+                ipLog()->error('Paysera.ipn: Price don\'t match.', array_merge($response, array('expectedPrice' => $payment['price'], 'recieved' => $amount)));
+                return false;
             }
-            if (isset($params['last_name'])) {
-                $newData['payer_last_name'] = $params['last_name'];
-                $eventData['payer_last_name'] = $params['last_name'];
-            }
-            if (isset($params['email'])) {
-                $newData['payer_email'] = $params['email'];
-                $eventData['payer_email'] = $params['email'];
-            }
-            if (isset($params['country'])) {
-                $newData['payer_country'] = $params['country'];
-                $eventData['payer_country'] = $params['country'];
+            if ($payment['currency'] != $currency) {
+                ipLog()->error('Paysera.ipn: currencies don\'t match.', array_merge($response, array('expectedCurrency' => $payment['currency'], 'recieved' => $currency)));
+                return false;
             }
 
-            $this->markAsPaid($paymentId, $newData, $eventData);
+            $this->markAsPaid($paymentId);
 
-        } else {
-            //fail
-            ipLog()->error(
-                'Paysera.ipn: notification check error',
-                $params
-            );
-            return;
 
+            return $response;
+
+        } catch (\Exception $e) {
+            ipLog()->error('Paysera.ipn: ' . get_class($e) . ' ' . $e->getMessage(), $response);
         }
-
-        return;
-
 
     }
 
@@ -174,18 +114,30 @@ class PaymentModel
     {
         require_once('WebToPay.php');
 
+        $payment = Model::getPayment($paymentId);
+        if (!$payment) {
+            throw new \Ip\Exception("Can't find order id. " . $paymentId);
+        }
+
+
+        $privateData = array(
+            'paymentId' => $paymentId,
+            'userId' => $payment['userId'],
+            'securityCode' => $payment['securityCode']
+        );
+
 
         $options = array(
-            'projectid'     => 55230,
-            'sign_password' => '702e52be319c9b692e5225702830df04',
-            'orderid'       => 125,
-            'amount'        => 1000,
-            'currency'      => 'LTL',
-            'country'       => 'LT',
+            'projectid'     => $this->projectId(),
+            'sign_password' => $this->password(),
+            'orderid'       => $paymentId,
+            'amount'        => $payment['price'],
+            'currency'      => $payment['currency'],
             'accepturl'     => ipRouteUrl('Paysera_return'),
             'callbackurl'   => ipRouteUrl('Paysera_ipn'),
-            'test'          => 1,
-            'cancelurl'     => ipConfig()->baseUrl()
+            'test'          => $this->isTestMode() ? "1" : "0",
+            'cancelurl'     => ipConfig()->baseUrl(),
+            //'parameters'    => json_encode($privateData)
         );
 
 
@@ -195,44 +147,6 @@ class PaymentModel
 
 
 
-        require_once('lib/Paysera.php');
-        if (!$this->getSid()) {
-            throw new \Ip\Exception('Please enter configuration values for Paysera plugin');
-        }
-
-
-        $payment = Model::getPayment($paymentId);
-        if (!$payment) {
-            throw new \Ip\Exception("Can't find order id. " . $paymentId);
-        }
-
-
-        $currency = $payment['currency'];
-        $privateData = array(
-            'paymentId' => $paymentId,
-            'userId' => $payment['userId'],
-            'securityCode' => $payment['securityCode']
-        );
-
-
-
-
-
-        $params = array(
-            'sid' => $this->getSid(),
-            'mode' => '2CO',
-            'li_0_product_id' => $payment['id'],
-            'li_0_name' => $payment['title'],
-            'li_0_price' => $payment['price'] / 100,
-            'currency_code' => $currency,
-            'custom' => json_encode($privateData),
-            'demo' => $this->isTestMode() ? 'Y' : 'N',
-            'x_receipt_link_url' => ipRouteUrl('Paysera_return'),
-        );
-        $form = \Paysera_Charge::form($params, 'auto');
-
-
-        return $form;
     }
 
     /**
@@ -261,15 +175,16 @@ class PaymentModel
     }
 
 
-    public function getSid()
+    public function projectId()
     {
-        if ($this->isTestMode()) {
-            return ipGetOption('Paysera.testSid');
-        } else {
-            return ipGetOption('Paysera.sid');
-        }
+        return ipGetOption('Paysera.projectId');
     }
 
+
+    public function password()
+    {
+        return ipGetOption('Paysera.password');
+    }
 
 
     public function isTestMode()

@@ -2,7 +2,7 @@
     "title": "Paysera",
     "version": "1.00",
     "name": "Paysera",
-    "description": "Paysera payment method to accept Accept Credit Cards and Debit Cards.",
+    "description": "Paysera payment method to bank transfers.",
     "author": "ImpressPages",
     "options": [
         {
@@ -13,25 +13,17 @@
             "default": "Production"
         },
         {
-            "label": "Paysera account ID (production mode)",
-            "name": "sid",
+            "label": "Paysera project ID",
+            "name": "projectId",
             "type": "text",
             "default": ""
         },
         {
-            "label": "Paysera account ID (test mode)",
-            "name": "testSid",
+            "label": "Paysera project password",
+            "name": "password",
             "type": "text",
-            "note": "The one you create in Paysera sandbox",
+            "note": "You will find it in the \"General settings\" section of project on Paysera account",
             "default": ""
-        },
-,
-        {
-            "label": "Secret word",
-            "name": "secretWord",
-            "type": "text",
-            "note": "Has to match secret word on your 2chekcout account -> site management section.",
-            "default": "tango"
         }
     ]
 }
