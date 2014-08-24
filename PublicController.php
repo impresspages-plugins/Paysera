@@ -16,17 +16,12 @@ class PublicController extends \Ip\Controller
     {
         $data = $this->processNotification();
 
-        $customData = json_decode($data['parameters'], true);
 
-        if (!empty($data['orderId'])) {
-
-            $paymentId = $data['orderId'];
-            if (!empty($customData['securityCode'])) {
-                $securityCode = $customData['securityCode'];
-
-                $payment = Model::getPayment($customData['paymentId']);
-
-
+        if (!empty($data['orderid'])) {
+            $paymentId = $data['orderid'];
+            $securityCode = $data['parameters'];
+            if (!empty($securityCode)) {
+                $payment = Model::getPayment($paymentId);
                 if ($payment) {
                     if ($payment['isPaid']) {
                         $response = Helper::responseAfterPayment($paymentId, $securityCode);

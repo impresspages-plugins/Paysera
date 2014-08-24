@@ -45,10 +45,7 @@ class PaymentModel
         $response = array();
 
         try {
-            $response = WebToPay::checkResponse(ipRequest()->getQuery(), array(
-                    'projectid'     => $this->projectId(),
-                    'sign_password' => $this->password(),
-                ));
+            $response = WebToPay::validateAndParseData(ipRequest()->getQuery(), $this->projectId(), $this->password());
 
             if ($response['test'] != PaymentModel::isTestMode()) {
                 ipLog()->error('Paysera.ipn: test mode parameter don\'t match', $response);
@@ -120,12 +117,6 @@ class PaymentModel
         }
 
 
-        $privateData = array(
-            'paymentId' => $paymentId,
-            'userId' => $payment['userId'],
-            'securityCode' => $payment['securityCode']
-        );
-
 
         $options = array(
             'projectid'     => $this->projectId(),
@@ -137,7 +128,7 @@ class PaymentModel
             'callbackurl'   => ipRouteUrl('Paysera_ipn'),
             'test'          => $this->isTestMode() ? "1" : "0",
             'cancelurl'     => ipConfig()->baseUrl(),
-            //'parameters'    => json_encode($privateData)
+            'parameters'    => $payment['securityCode']
         );
 
 
