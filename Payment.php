@@ -11,12 +11,12 @@ class Payment extends \Ip\Payment
 {
     public function name()
     {
-        return '2checkout';
+        return 'Paysera';
     }
 
     public function icon($width = null, $height = null)
     {
-        return ipFileUrl('Plugin/Paysera/assets/2checkout.png');
+        return ipFileUrl('Plugin/Paysera/assets/Paysera.png');
     }
 
     public function html()

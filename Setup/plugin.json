@@ -1,8 +1,8 @@
 {
-    "title": "2checkout",
+    "title": "Paysera",
     "version": "1.00",
     "name": "Paysera",
-    "description": "2checkout payment method to accept Accept Credit Cards and Debit Cards.",
+    "description": "Paysera payment method to accept Accept Credit Cards and Debit Cards.",
     "author": "ImpressPages",
     "options": [
         {
@@ -13,16 +13,16 @@
             "default": "Production"
         },
         {
-            "label": "2checkout account ID (production mode)",
+            "label": "Paysera account ID (production mode)",
             "name": "sid",
             "type": "text",
             "default": ""
         },
         {
-            "label": "2checkout account ID (test mode)",
+            "label": "Paysera account ID (test mode)",
             "name": "testSid",
             "type": "text",
-            "note": "The one you create in 2checkout sandbox",
+            "note": "The one you create in Paysera sandbox",
             "default": ""
         },
 ,

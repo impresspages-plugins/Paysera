@@ -45,7 +45,7 @@ class PublicController extends \Ip\Controller
     {
         $paymentModel = PaymentModel::instance();
         $postData = ipRequest()->getPost();
-        ipLog()->info('Paysera.ipn: 2checkout notification', $postData);
+        ipLog()->info('Paysera.ipn: Paysera notification', $postData);
         $paymentModel->processCallback($postData);
     }
 

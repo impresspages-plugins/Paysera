@@ -106,7 +106,7 @@ class PaymentModel
             $info = array(
                 'id' => $payment['orderId'],
                 'paymentId' => $payment['id'],
-                'paymentMethod' => '2checkout',
+                'paymentMethod' => 'Paysera',
                 'title' => $payment['title'],
                 'userId' => $payment['userId']
             );
@@ -159,7 +159,7 @@ class PaymentModel
         $info = array(
             'id' => $payment['orderId'],
             'paymentId' => $payment['id'],
-            'paymentMethod' => '2checkout',
+            'paymentMethod' => 'Paysera',
             'title' => $payment['title'],
             'userId' => $payment['userId']
         );
@@ -170,7 +170,7 @@ class PaymentModel
 
 
 
-    public function get2checkoutForm($paymentId)
+    public function getPayseraForm($paymentId)
     {
         require_once('lib/Paysera.php');
         if (!$this->getSid()) {

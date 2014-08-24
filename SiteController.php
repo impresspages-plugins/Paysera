@@ -37,7 +37,7 @@ class SiteController extends \Ip\Controller
             $paymentModel = PaymentModel::instance();
 
             $data = array(
-                'form' => $paymentModel->get2checkoutForm($paymentId)
+                'form' => $paymentModel->getPayseraForm($paymentId)
             );
 
             $answer = ipView('view/page/paymentRedirect.php', $data)->render();

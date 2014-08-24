@@ -1,6 +1,6 @@
 <?php
 
-$routes['2checkout/pay/{paymentId}/{securityCode}'] = array(
+$routes['Paysera/pay/{paymentId}/{securityCode}'] = array(
     'name' => 'Paysera_pay',
     'plugin' => 'Paysera',
     'controller' => 'SiteController',
@@ -8,7 +8,7 @@ $routes['2checkout/pay/{paymentId}/{securityCode}'] = array(
 );
 
 
-$routes['2checkout/return'] = array(
+$routes['Paysera/return'] = array(
     'name' => 'Paysera_return',
     'plugin' => 'Paysera',
     'controller' => 'PublicController',
@@ -17,7 +17,7 @@ $routes['2checkout/return'] = array(
 
 
 
-$routes['2checkout/status/{paymentId}/{securityCode}'] = array(
+$routes['Paysera/status/{paymentId}/{securityCode}'] = array(
     'name' => 'Paysera_status',
     'plugin' => 'Paysera',
     'controller' => 'SiteController',
