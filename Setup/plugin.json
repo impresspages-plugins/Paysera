@@ -6,9 +6,15 @@
     "author": "ImpressPages",
     "options": [
         {
+            "label": "",
+            "name": "",
+            "type": "Info",
+            "html": "<p class=\"alert alert-info\">Please set <b>\"Redirect customers to the accepturl link only after the payment confirmation.\"</b> option in Paysera <b>\"Payment gateway\"</b> section of your project to prevent any possible fraud.</p>"
+        },
+        {
             "label": "Mode",
             "name": "mode",
-            "type": "select",
+            "type": "Select",
             "values": ["Production", "Test", "Skip"],
             "default": "Production",
             "note": "Test mode has to be enabled on Paysera project settings \"Payment gateway\" section"
@@ -16,13 +22,13 @@
         {
             "label": "Paysera project ID",
             "name": "projectId",
-            "type": "text",
+            "type": "Text",
             "default": ""
         },
         {
             "label": "Paysera project password",
-            "name": "password",
-            "type": "text",
+            "name": "Password",
+            "type": "Text",
             "note": "You will find it in the \"General settings\" section of project on Paysera account",
             "default": ""
         }
