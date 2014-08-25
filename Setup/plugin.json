@@ -10,7 +10,8 @@
             "name": "mode",
             "type": "select",
             "values": ["Production", "Test", "Skip"],
-            "default": "Production"
+            "default": "Production",
+            "note": "Test mode has to be enabled on Paysera project settings \"Payment gateway\" section"
         },
         {
             "label": "Paysera project ID",
