@@ -9,7 +9,7 @@
             "label": "",
             "name": "",
             "type": "Info",
-            "html": "<p class=\"alert alert-info\">Please set <b>\"Redirect customers to the accepturl link only after the payment confirmation.\"</b> option in Paysera <b>\"Payment gateway\"</b> section of your project to prevent any possible fraud.</p>"
+            "html": "<p class=\"alert alert-info\">Please set <b>\"Redirect customers to the accepturl link only after the payment confirmation.\"</b> option in Paysera <b>\"Payment gateway\"</b> section of your project to prevent any possible fraud.</p><p class=\"alert alert-info\">This is just the payment method. Please install <b>SimpleProduct</b> or other plugin to actually sell something.</p>"
         },
         {
             "label": "Mode",

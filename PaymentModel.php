@@ -19,6 +19,9 @@ class PaymentModel
 
     protected function __construct()
     {
+        if ($this->projectId() == '' || $this->password() == '') {
+            throw new \Ip\Exception('Please enter project ID and password in Paysera plugin configuration.');
+        }
     }
 
     protected function __clone()

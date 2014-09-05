@@ -23,7 +23,11 @@ class SiteController extends \Ip\Controller
             Model::update($paymentId, array('userId' => ipUser()->userId()));
         }
 
-        $paymentModel = PaymentModel::instance();
+        try {
+            $paymentModel = PaymentModel::instance();
+        } catch (\Ip\Exception $e) {
+            return $e->getMessage();
+        }
         if (!$order['isPaid'] && $paymentModel->isSkipMode()) {
             $paymentModel->markAsPaid($paymentId);
             $order = Model::getPayment($paymentId);
