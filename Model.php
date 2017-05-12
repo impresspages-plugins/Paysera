@@ -15,10 +15,6 @@ class Model
             $userId = ipUser()->userId();
         }
 
-
-
-
-
         $data = array(
             'title' => empty($paymentData['title']) ? '' : $paymentData['title'],
             'cancelUrl' => empty($paymentData['cancelUrl']) ? '' : $paymentData['cancelUrl'],
@@ -27,27 +23,26 @@ class Model
             'currency' => $paymentData['currency'],
             'price' => $paymentData['price'],
             'userId' => $userId,
+            'payer_email' => isset($paymentData['payer_email']) ? $paymentData['payer_email'] : null,
+            'payment' => isset($paymentData['payment']) ? $paymentData['payment'] : null,
             'securityCode' => self::randomString(32),
             'createdAt' => date('Y-m-d H:i:s')
         );
 
-
         $paymentId = ipDb()->insert('Paysera', $data);
         return $paymentId;
     }
-
-
 
     public static function getPayment($paymentId)
     {
         $order = ipDb()->selectRow('Paysera', '*', array('id' => $paymentId));
         return $order;
     }
+
     public static function update($paymentId, $data)
     {
         ipDb()->update('Paysera', $data, array('id' => $paymentId));
     }
-
 
     protected static function randomString($length)
     {

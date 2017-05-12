@@ -29,7 +29,7 @@ class PublicController extends \Ip\Controller
                         $viewData = array(
                             'payment' => $payment
                         );
-                        $response = ipView('view/paymentError.php', $viewData);
+                        $response = ipView('view/page/paymentError.php', $viewData);
                     }
 
                 }
@@ -56,9 +56,30 @@ class PublicController extends \Ip\Controller
     protected function processNotification()
     {
         $paymentModel = PaymentModel::instance();
-        ipLog()->info('Paysera.ipn: Paysera notification', ipRequest()->getPost());
+        ipLog()->info('Paysera.ipn: Paysera notification', ['get' => ipRequest()->getQuery(), 'post' => ipRequest()->getPost()]);
         $data = $paymentModel->processCallback();
         return $data;
+    }
+
+    public function sms()
+    {
+        $paymentModel = PaymentModel::instance();
+        $data = $paymentModel->processSMS();
+
+        // default
+        $content = 'ERROR';
+
+        if ($data) {
+            ipEvent('Paysera_smsReceived', $data);
+
+            $content = 'OK';
+            $content = ipFilter('Paysera_smsResponse', $content, $data);
+        }
+
+        $response = new \Ip\Response();
+        $response->setContent($content);
+
+        return $response;
     }
 
 }

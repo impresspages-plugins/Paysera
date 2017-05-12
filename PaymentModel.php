@@ -78,13 +78,44 @@ class PaymentModel
                 return false;
             }
 
-            $this->markAsPaid($paymentId);
+            if ($response['status'] == 1) {
+                $this->markAsPaid($paymentId);
+            } else {
+                ipLog()->info('Paysera.ipn: non-success payment status', $response);
+            }
 
 
             return $response;
 
         } catch (\Exception $e) {
             ipLog()->error('Paysera.ipn: ' . get_class($e) . ' ' . $e->getMessage(), $response);
+        }
+
+    }
+
+    public function processSMS()
+    {
+        require_once('WebToPay.php');
+
+        $response = array();
+
+        try {
+            $response = WebToPay::validateAndParseData(ipRequest()->getQuery(), $this->projectId(), $this->password());
+
+            if ($response['test'] != PaymentModel::isTestMode()) {
+                ipLog()->error('Paysera.sms: test mode parameter doesn\'t match', $response);
+                return false;
+            }
+
+            if ($response['projectid'] != $this->projectId()) {
+                ipLog()->error('Paysera.sms: project ID doesn\'t match', $response);
+                return false;
+            }
+
+            return $response;
+
+        } catch (\Exception $e) {
+            ipLog()->error('Paysera.sms: ' . get_class($e) . ' ' . $e->getMessage(), $response);
         }
 
     }
@@ -119,8 +150,6 @@ class PaymentModel
             throw new \Ip\Exception("Can't find order id. " . $paymentId);
         }
 
-
-
         $options = array(
             'projectid'     => $this->projectId(),
             'sign_password' => $this->password(),
@@ -131,16 +160,14 @@ class PaymentModel
             'callbackurl'   => ipRouteUrl('Paysera_ipn'),
             'test'          => $this->isTestMode() ? "1" : "0",
             'cancelurl'     => ipConfig()->baseUrl(),
-            'parameters'    => $payment['securityCode']
+            'parameters'    => $payment['securityCode'],
+            'p_email'       => isset($payment['payer_email']) ? $payment['payer_email'] : null,
+            'payment'       => isset($payment['payment']) ? $payment['payment'] : null,
+            'paytext'       => isset($payment['title']) ? $payment['title'] . ' ([site_name] / [order_nr])' : null
         );
-
-
 
         $request = WebToPay::redirectToPayment($options);
         var_dump($request);exit;
-
-
-
     }
 
     /**

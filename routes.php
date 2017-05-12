@@ -7,14 +7,12 @@ $routes['Paysera/pay/{paymentId}/{securityCode}'] = array(
     'action' => 'pay'
 );
 
-
 $routes['Paysera/return'] = array(
     'name' => 'Paysera_return',
     'plugin' => 'Paysera',
     'controller' => 'PublicController',
     'action' => 'userBack'
 );
-
 
 $routes['Paysera/ipn'] = array(
     'name' => 'Paysera_ipn',
@@ -28,4 +26,11 @@ $routes['Paysera/status/{paymentId}/{securityCode}'] = array(
     'plugin' => 'Paysera',
     'controller' => 'SiteController',
     'action' => 'status'
+);
+
+$routes['Paysera/sms'] = array(
+    'name' => 'Paysera_sms',
+    'plugin' => 'Paysera',
+    'controller' => 'PublicController',
+    'action' => 'sms'
 );

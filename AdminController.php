@@ -68,6 +68,10 @@ class AdminController {
                     'field' => 'payer_country'
                 ),
                 array(
+                    'label' => __('Payment', 'Paysera', false),
+                    'field' => 'payment'
+                ),
+                array(
                     'label' => __('Created At', 'Paysera', false),
                     'field' => 'createdAt'
                 ),
